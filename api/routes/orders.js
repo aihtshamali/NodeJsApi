@@ -5,6 +5,7 @@ const mongoose =require('mongoose')
 const Order = require('../models/Order')
 const Product = require('../models/Product')
 
+const AuthCheck = require('../middleware/auth-check');
 
 // Index
 router.get('/',(req,res,next)=>{
@@ -38,7 +39,7 @@ router.get('/',(req,res,next)=>{
 
 
 // Store
-router.post('/',(req,res,next)=>{
+router.post('/',AuthCheck,(req,res,next)=>{
     Product.findById(req.body.productId).exec()
     .then(product => {
         if(!product){
@@ -77,7 +78,7 @@ router.post('/',(req,res,next)=>{
 })
 
 // Show
-router.get('/:orderId',(req,res,next)=>{
+router.get('/:orderId',AuthCheck,(req,res,next)=>{
     Order.findById(req.params.orderId).exec()
     .then(data=>{
         res.status(200).json({
@@ -91,7 +92,7 @@ router.get('/:orderId',(req,res,next)=>{
 
 })
 
-router.delete('/:orderId',(req,res,next)=>{
+router.delete('/:orderId',AuthCheck,(req,res,next)=>{
     Order.findByIdAndDelete(req.params.orderId).exec()
     .then(data =>{
         if(!data){
