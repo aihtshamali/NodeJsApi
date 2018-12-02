@@ -1,8 +1,6 @@
 const express = require ('express')
 const router = express.Router();
-const Product = require('../models/Product')
-const mongoose = require('mongoose')
-const checkAuth = require('../middleware/auth-check');
+
 const multer = require('multer')
 
 const storage = multer.diskStorage({
@@ -30,135 +28,24 @@ const upload = multer({storage:storage,
 })
 
 
+const checkAuth = require('../middleware/auth-check');
+
+const ProductController = require('../controllers/product')
+
+
 // Index
-router.get('/',(req,res,next)=>{
-    Product.find()
-    .select('name price _id productImage')
-    .exec()
-    .then(data=>{
-        const response = {
-            count: data.length,
-            products: data.map(doc => {
-                return {
-                    name: doc.name,
-                    price: doc.price,
-                    productImage:doc.productImage,
-                    _id: doc._id,
-                    request:{
-                        type: 'GET',
-                        url: 'http://localhost:3000/product/'+doc._id
-                    }
-                }
-            })
-        }
-        if(data.length>0)
-            res.status(200).json(response           
-            )
-        else
-        {
-            res.status(404).json({
-                message: 'No entries Found'           
-            })
-        }
-    })
-    .catch(err=>{
-        res.status(500).json({
-            error: err           
-        })
-    })
-    
-})
+router.get('/',ProductController.index)
 
 // Store
-router.post('/',checkAuth,upload.single('productImage'),(req,res,next)=>{
-    console.log(req.file);
-    
-    const product = new Product({
-        _id: new mongoose.Types.ObjectId(),
-        name: req.body.name,
-        price: req.body.price,
-        productImage: req.file.path
-    });
-    product.save().then(data => {
-        // console.log(data)
-        res.status(201).json({
-            message: "Created Product Successfully",
-            createdProduct:{
-                name: data.name,
-                price: data.price,
-                productImage:data.productImage,
-                _id: data._id,
-                request:{
-                    type: 'GET',
-                    url: 'http://localhost:3000/product/'+data._id
-                }
-            }
-        })
-    }).catch(err => {
-        res.status(500).json({
-            error: err           
-        })
-    });
-
-})
+router.post('/',checkAuth,upload.single('productImage'),ProductController.store)
 
 // show
-router.get('/:productId',(req,res,next)=>{
-    const productId=req.params.productId; 
-    Product.findById(productId).exec().then(data=>{
-        res.status(200).json({
-            product: data
-        })
-    })
-    .catch(err=>{
-        console.log(err);
-        res.status(404).json({
-            message: 'No valid Entry Found'
-        })        
-    })
-   
-}) 
+router.get('/:productId',ProductController.show) 
 
 // Update
-router.patch('/:productId',checkAuth,(req,res,next)=>{
-    const productId=req.params.productId; 
-    const updateOps= {}
-    for(const ops of req.body)
-        updateOps[ops.propName]= ops.value;
-
-    Product.update({_id:productId},{$set:updateOps}).exec()
-    .then(data=>{
-        console.log(data);
-        res.status(200).json({
-            message: 'Upated Product',
-            product: data
-        })
-    })
-    .catch(error=>{
-        res.status(500).json({
-            error: error
-        })
-    })
-    
-    // OR
-    // Product.update({_id:productId},{$set:{name:req.params.name}})
-    
-}) 
+router.patch('/:productId',checkAuth,ProductController.update) 
 
 // Delete
-router.delete('/:productId',checkAuth,(req,res,next)=>{
-    const productId=req.params.productId; 
-    Product.remove({_id:productId}).exec()
-    .then(data=>{
-        res.status(200).json({
-            message: data,
-        })
-    })
-    .catch(err=>{
-        res.status(500).json({
-            error: err,
-        })
-    })    
-}) 
+router.delete('/:productId',checkAuth,ProductController.delete) 
 
 module.exports = router;
