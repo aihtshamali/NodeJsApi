@@ -1,0 +1,35 @@
+{
+  "name": "nodejsdemo",
+  "version": "1.0.0",
+  "description": "My First NodeJs Module With RestFul Apis",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aihtshamali/NodeJsApi.git"
+  },
+  "keywords": [
+    "NodeJsApi",
+    "RestFul",
+    "Apis",
+    "Npm"
+  ],
+  "author": "Aihtsham Ali",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aihtshamali/NodeJsApi/issues"
+  },
+  "homepage": "https://github.com/aihtshamali/NodeJsApi#readme",
+  "dependencies": {
+    "bcrypt": "^3.0.2",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "jsonwebtoken": "^8.4.0",
+    "mongoose": "^5.2.8",
+    "morgan": "^1.9.1",
+    "multer": "^1.4.1"
+  }
+}

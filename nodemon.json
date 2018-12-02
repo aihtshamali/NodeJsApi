@@ -1,0 +1,7 @@
+{
+    "env":{
+        "MONGO_ATLAS_PW":"LaH_I8587",
+        "Project_Path":"http://localhost:3000/",
+        "JWT_KEY": "secretkey"
+    }
+}
